@@ -1,0 +1,2 @@
+exclude VS2019
+include src
