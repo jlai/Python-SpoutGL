@@ -96,6 +96,7 @@ PYBIND11_MODULE(_spoutgl, m) {
             })
         .def("setSenderName", &SpoutSender::SetSenderName)
         .def("releaseSender", &SpoutSender::ReleaseSender)
+        .def("sendTexture", &SpoutSender::SendTexture)
         .def("sendImage", [](SpoutSender& sender, const py::buffer pixelBuffer, int height, int width, GLenum glFormat, bool invert, GLuint hostFbo) {
             py::buffer_info bufferInfo = pixelBuffer.request();
             if (bufferInfo.size * bufferInfo.itemsize < width * height * getBytesPerPixel(glFormat)) {
