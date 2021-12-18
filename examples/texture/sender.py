@@ -3,7 +3,8 @@ from math import ceil
 import pygame
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from random import randint
+from random import Random
+import time
 
 TARGET_FPS = 30
 
@@ -42,13 +43,12 @@ EDGES = (
 )
 
 
-def randcolor():
-    return randint(0, 255)
-
-
 def Cube():
+    random = Random(ceil(time.time()))
+
     glBegin(GL_LINES)
     for edge in EDGES:
+        glColor3f(random.random(), random.random(), random.random())
         for index in edge:
             glVertex3fv(VERTICES[index])
     glEnd()
