@@ -5,6 +5,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from random import Random
 import time
+import argparse
 
 TARGET_FPS = 30
 
@@ -54,6 +55,11 @@ def Cube():
     glEnd()
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--use-send-fbo', dest='useSendFbo',
+                    action='store_true')
+args = parser.parse_args()
+
 pygame.init()
 pygame.display.set_caption('Texture Sender Example')
 pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT),
@@ -70,8 +76,8 @@ glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0,
                  SEND_WIDTH, SEND_HEIGHT, 0)
 
 # Create framebuffer and attach texture
-fbo = glGenFramebuffers(1)
-glBindFramebuffer(GL_FRAMEBUFFER, fbo)
+fboID = glGenFramebuffers(1)
+glBindFramebuffer(GL_FRAMEBUFFER, fboID)
 glFramebufferTexture2D(
     GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sendTextureID, 0)
 
@@ -99,11 +105,16 @@ with SpoutGL.SpoutSender() as sender:
 
         # Copy on-screen framebuffer to our fbo
         glBlitNamedFramebuffer(
-            0, fbo, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 0, SEND_WIDTH, SEND_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST)
+            0, fboID, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 0, SEND_WIDTH, SEND_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST)
 
         # Send the texture
-        result = sender.sendTexture(
-            sendTextureID, GL_TEXTURE_2D, SEND_WIDTH, SEND_HEIGHT, True, 0)
+        if args.useSendFbo:
+            glBindFramebuffer(GL_FRAMEBUFFER, fboID)
+            result = sender.sendFbo(fboID, SEND_WIDTH, SEND_HEIGHT, True)
+            glBindFramebuffer(GL_FRAMEBUFFER, 0)
+        else:
+            result = sender.sendTexture(
+                sendTextureID, GL_TEXTURE_2D, SEND_WIDTH, SEND_HEIGHT, True, 0)
 
         # Indicate that a frame is ready to read
         sender.setFrameSync(SENDER_NAME)
