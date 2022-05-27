@@ -2,7 +2,7 @@
 
 					SpoutReceiver.h
 
-	Copyright (c) 2014-2021, Lynn Jarvis. All rights reserved.
+	Copyright (c) 2014-2022, Lynn Jarvis. All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without modification, 
 	are permitted provided that the following conditions are met:
@@ -43,7 +43,7 @@ class SPOUT_DLLEXP SpoutReceiver {
 	//   The application will not connect to any other  unless the user selects one
 	//   If that sender closes, the application will wait for the nominated sender to open 
 	//   If no name is specified, the receiver will connect to the active sender
-	void SetReceiverName(const char * sendername);
+	void SetReceiverName(const char * sendername = nullptr);
 	// Close receiver and release resources ready to connect to another sender
 	void ReleaseReceiver();
 	// Receive shared texture
@@ -262,6 +262,9 @@ class SPOUT_DLLEXP SpoutReceiver {
 	// Open dialog for the user to select a sender
 	//   Optional message argument
 	bool SelectSenderPanel(const char* message = nullptr);
+	// Receiver detect sender selection
+	bool CheckSenderPanel(char *sendername, int maxchars = 256);
+
 
 	// Legacy OpenGL Draw function
 	// See _SpoutCommon.h_ #define legacyOpenGL

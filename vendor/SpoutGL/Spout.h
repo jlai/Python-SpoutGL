@@ -4,7 +4,7 @@
 
 	Documentation - https://spoutgl-site.netlify.app/					
 
-	Copyright (c) 2014-2021, Lynn Jarvis. All rights reserved.
+	Copyright (c) 2014-2022, Lynn Jarvis. All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without modification, 
 	are permitted provided that the following conditions are met:
@@ -39,7 +39,7 @@ class SPOUT_DLLEXP Spout : public spoutGL {
 	public:
 
 	Spout();
-    ~Spout();
+	~Spout();
 
 	//
 	// ===================== SENDER =========================
@@ -87,10 +87,10 @@ class SPOUT_DLLEXP Spout : public spoutGL {
 	//
 
 	// Specify sender for connection
-	//   The application will not connect to any other  unless the user selects one
-	//   If that sender closes, the application will wait for the nominated sender to open 
+	//   If a name is specified, the receiver will not connect to any other unless the user selects one
+	//   If that sender closes, the receiver will wait for the nominated sender to open 
 	//   If no name is specified, the receiver will connect to the active sender
-	void SetReceiverName(const char * sendername);
+	void SetReceiverName(const char * sendername = nullptr);
 	// Close receiver and release resources ready to connect to another sender
 	void ReleaseReceiver();
 	// Receive shared texture
@@ -186,8 +186,11 @@ class SPOUT_DLLEXP Spout : public spoutGL {
 	int GetAdapter();
 	// Set graphics adapter for output
 	bool SetAdapter(int index = 0);
+	// Get sender adapter index and name for a given sender
+	int GetSenderAdapter(const char* sendername, char* adaptername = nullptr, int maxchars = 256);
 	// Get the current adapter description
 	bool GetAdapterInfo(char *renderdescription, char *displaydescription, int maxchars);
+
 
 	//
 	// 2.006 compatibility
@@ -221,6 +224,9 @@ class SPOUT_DLLEXP Spout : public spoutGL {
 	// Open dialog for the user to select a sender
 	//   Optional message argument
 	bool SelectSenderPanel(const char* message = nullptr);
+	// Receiver detect sender selection
+	bool CheckSpoutPanel(char *sendername, int maxchars = 256);
+
 
 	// Legacy OpenGL Draw functions
 	// See _SpoutCommon.h_ #define legacyOpenGL
@@ -239,17 +245,15 @@ protected:
 	void InitReceiver(const char * sendername, unsigned int width, unsigned int height, DWORD dwFormat);
 	// Receiver find sender and retrieve information
 	bool ReceiveSenderData();
-	// Receiver detect sender selection
-	bool CheckSpoutPanel(char *sendername, int maxchars = 256);
-
+	
 	//
 	// Class globals
 	//
 
-	// Graphics adapters
-	int m_AdapterNumber;
-	int m_AdapterIndex;
+	// Graphics adapter name
 	char m_AdapterName[256];
+	bool m_bAdapt; // Receiver adapt to the sender adapter
+
 
 };
 

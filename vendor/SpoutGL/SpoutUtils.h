@@ -6,7 +6,7 @@
 
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-		Copyright (c) 2017-2021, Lynn Jarvis. All rights reserved.
+		Copyright (c) 2017-2022, Lynn Jarvis. All rights reserved.
 
 		Redistribution and use in source and binary forms, with or without modification, 
 		are permitted provided that the following conditions are met:
@@ -43,7 +43,6 @@
 #include <string>
 #include <Shellapi.h> // for shellexecute
 #include <shlwapi.h> // for path functions
-#include <shlobj.h> // to find the AppData folder
 
 //
 // C++11 timer is only available for MS Visual Studio 2015 and above.
@@ -228,7 +227,7 @@ namespace spoututils {
 	//
 	namespace
 	{
-	
+
 		// Local functions
 		std::string _getLogPath();
 		std::string _levelName(SpoutLogLevel level);
@@ -241,8 +240,6 @@ namespace spoututils {
 	}
 
 
-
 }
-
 
 #endif

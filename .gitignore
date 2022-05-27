@@ -11,6 +11,7 @@ VS2019/Release
 VS2019/x64
 VS2019/Win32
 src/SpoutGL/*.dll
+.idea
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
