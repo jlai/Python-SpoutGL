@@ -177,7 +177,21 @@ PYBIND11_MODULE(_spoutgl, m) {
         .def("waitFrameSync", &SpoutReceiver::WaitFrameSync, py::arg("senderName"), py::arg("timeout") = 0, py::call_guard<py::gil_scoped_release>())
 
         // data-sharing
-        .def("readMemoryBuffer", &SpoutReceiver::ReadMemoryBuffer)
+        .def("readMemoryBuffer", [](SpoutReceiver& receiver, const char *name, std::optional<py::buffer> buffer, int length) {
+            if (!buffer.has_value()) {
+                // If None is passed in, wait for sender update
+                return receiver.ReadMemoryBuffer(name, NULL, length);
+            }
+
+            py::buffer_info bufferInfo(buffer->request());
+
+            if (bufferInfo.size == 0) {
+                // If empty buffer is passed in, wait for sender update
+                return receiver.ReadMemoryBuffer(name, NULL, length);
+            }
+
+            return receiver.ReadMemoryBuffer(name, static_cast<char*>(bufferInfo.ptr), length);
+        })
         .def("getMemoryBufferSize", &SpoutReceiver::GetMemoryBufferSize)
     );
 
