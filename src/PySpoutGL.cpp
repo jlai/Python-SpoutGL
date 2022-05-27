@@ -117,6 +117,12 @@ PYBIND11_MODULE(_spoutgl, m) {
         .def("waitFrameSync", &SpoutSender::WaitFrameSync, py::call_guard<py::gil_scoped_release>())
         .def("getCPU", &SpoutSender::GetCPU)
         .def("getGLDX", &SpoutSender::GetGLDX)
+
+        // data sharing
+        .def("createMemoryBuffer", &SpoutSender::CreateMemoryBuffer)
+        .def("writeMemoryBuffer", &SpoutSender::WriteMemoryBuffer)
+        .def("deleteMemoryBuffer", &SpoutSender::DeleteMemoryBuffer)
+        .def("getMemoryBufferSize", &SpoutSender::GetMemoryBufferSize)
    );
 
     addCommonDefs(py::class_<SpoutReceiver>(m, "SpoutReceiver")
@@ -169,6 +175,10 @@ PYBIND11_MODULE(_spoutgl, m) {
         .def("getSenderFrame", &SpoutReceiver::GetSenderFrame)
         .def("setFrameSync", &SpoutReceiver::SetFrameSync)
         .def("waitFrameSync", &SpoutReceiver::WaitFrameSync, py::arg("senderName"), py::arg("timeout") = 0, py::call_guard<py::gil_scoped_release>())
+
+        // data-sharing
+        .def("readMemoryBuffer", &SpoutReceiver::ReadMemoryBuffer)
+        .def("getMemoryBufferSize", &SpoutReceiver::GetMemoryBufferSize)
     );
 
     auto enums = m.def_submodule("enums", "Re-export of supported OpenGL format enums as integers");
