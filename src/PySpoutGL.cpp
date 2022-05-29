@@ -185,9 +185,12 @@ PYBIND11_MODULE(_spoutgl, m) {
 
             py::buffer_info bufferInfo(buffer->request());
 
-            if (bufferInfo.size == 0) {
-                // If empty buffer is passed in, wait for sender update
-                return receiver.ReadMemoryBuffer(name, NULL, length);
+            if (bufferInfo.size * bufferInfo.itemsize < length)) {
+                throw pybind11::buffer_error("Buffer not large enough");
+            }
+
+            if (!PyBuffer_IsContiguous(bufferInfo.view(), 'C')) {
+                throw pybind11::buffer_error("Buffer must be contiguous");
             }
 
             return receiver.ReadMemoryBuffer(name, static_cast<char*>(bufferInfo.ptr), length);
