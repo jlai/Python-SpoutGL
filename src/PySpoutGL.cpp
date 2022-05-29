@@ -179,8 +179,8 @@ PYBIND11_MODULE(_spoutgl, m) {
         // data-sharing
         .def("readMemoryBuffer", [](SpoutReceiver& receiver, const char *name, std::optional<py::buffer> buffer, int length) {
             if (!buffer.has_value()) {
-                // If None is passed in, wait for sender update
-                return receiver.ReadMemoryBuffer(name, NULL, length);
+                // Buffer cannot be None
+                throw pybind11::type_error("Must provide a buffer")
             }
 
             py::buffer_info bufferInfo(buffer->request());
