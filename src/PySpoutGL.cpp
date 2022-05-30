@@ -185,7 +185,7 @@ PYBIND11_MODULE(_spoutgl, m) {
 
             py::buffer_info bufferInfo(buffer->request());
 
-            if (bufferInfo.size * bufferInfo.itemsize < length)) {
+            if (bufferInfo.size * bufferInfo.itemsize < length) {
                 throw pybind11::buffer_error("Buffer not large enough");
             }
 
