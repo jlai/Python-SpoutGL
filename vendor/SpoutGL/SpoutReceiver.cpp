@@ -66,10 +66,11 @@
 //					- Add data function ReadMemoryBuffer
 //		24.04.21	- Add OpenGL shared texture access functions
 //		03.06.21	- Add GetMemoryBufferSize
+//		15.10.21	- Allow no argument for SetReceiverName
 //
 // ====================================================================================
 //
-//	Copyright (c) 2014-2021, Lynn Jarvis. All rights reserved.
+//	Copyright (c) 2014-2022, Lynn Jarvis. All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without modification, 
 //	are permitted provided that the following conditions are met:
@@ -125,9 +126,8 @@ SpoutReceiver::SpoutReceiver()
 //---------------------------------------------------------
 SpoutReceiver::~SpoutReceiver()
 {
-	spout.ReleaseReceiver();
-}
 
+}
 
 //---------------------------------------------------------
 void SpoutReceiver::SetReceiverName(const char * SenderName)
@@ -599,6 +599,12 @@ bool SpoutReceiver::ReceiveImage(unsigned char *pixels, GLenum glFormat, bool bI
 bool SpoutReceiver::SelectSenderPanel(const char *message)
 {
 	return spout.SelectSenderPanel(message);
+}
+
+//---------------------------------------------------------
+bool SpoutReceiver::CheckSenderPanel(char *sendername, int maxchars)
+{
+	return spout.CheckSpoutPanel(sendername, maxchars);
 }
 
 

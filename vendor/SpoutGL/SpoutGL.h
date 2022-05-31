@@ -5,7 +5,7 @@
 	Base class for OpenGL SpoutSDK
 	See also Sender and Receiver wrapper classes.
 
-	Copyright (c) 2021, Lynn Jarvis. All rights reserved.
+	Copyright (c) 2021-2022, Lynn Jarvis. All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without modification, 
 	are permitted provided that the following conditions are met:
@@ -53,7 +53,7 @@ class SPOUT_DLLEXP spoutGL {
 	public:
 
 	spoutGL();
-    ~spoutGL();
+    virtual ~spoutGL();
 
 	//
 	// OpenGL shared texture access
@@ -98,7 +98,7 @@ class SPOUT_DLLEXP spoutGL {
 	int GetMaxSenders();
 	// Set user Maximum senders allowed
 	void SetMaxSenders(int maxSenders);
-
+	
 	//
 	// 2.006 compatibility
 	//
@@ -153,6 +153,12 @@ class SPOUT_DLLEXP spoutGL {
 	// DX11 texture write
 	//  o Copy a DX11 texture to the shared DX11 texture
 	bool WriteTexture(ID3D11Texture2D** texture);
+	// DX11 texture write with readback to OpenGL texture
+	//   o Copy a DX11 texture to the DX11 shared texture
+	//   o Copy the linked OpenGL texture back to and OpenGL texture
+	bool WriteTextureReadback(ID3D11Texture2D** texture, GLuint TextureID, GLuint TextureTarget,
+		unsigned int width, unsigned int height, bool bInvert, GLuint HostFBO = 0);
+
 
 	// Initialize OpenGL and DX11
 	//     o Load extensions and check for availability and function
@@ -186,12 +192,12 @@ class SPOUT_DLLEXP spoutGL {
 	// 2.006 compatibility
 	//
 
-	bool OpenDirectX11();
+	bool OpenDirectX11(ID3D11Device* pDevice = nullptr);
 	ID3D11Device* GetDX11Device();
 	ID3D11DeviceContext* GetDX11Context();
 	void CleanupDirectX();
 	void CleanupDX11();
-	void CleanupInterop();
+	bool CleanupInterop();
 
 	//
 	// OpenGL extensions
@@ -221,7 +227,7 @@ class SPOUT_DLLEXP spoutGL {
 	//
 
 	// Link a shared DirectX texture to an OpenGL texture
-	HANDLE LinkGLDXtextures(void* pDXdevice, void* pSharedTexture, HANDLE dxShareHandle, GLuint glTextureID);
+	HANDLE LinkGLDXtextures(void* pDXdevice, void* pSharedTexture, GLuint glTextureID);
 	// Return a handle to the the DX/GL interop device
 	HANDLE GetInteropDevice();
 	// Copy OpenGL to shared DirectX 11 texture via CPU
@@ -287,12 +293,13 @@ protected :
 	GLuint m_pbo[4];
 	int PboIndex;
 	int NextPboIndex;
+
 	int m_nBuffers;
 	bool UnloadTexturePixels(GLuint TextureID, GLuint TextureTarget,
 		unsigned int width, unsigned int height, unsigned int pitch,
 		unsigned char* data, GLenum glFormat = GL_RGBA,
 		bool bInvert = false, GLuint HostFBO = 0);
-
+	
 	// OpenGL <-> DX11
 	// WriteDX11texture - public
 	// ReadDX11texture  - public
@@ -362,6 +369,7 @@ protected :
 	bool m_bInitialized;
 	bool m_bMirror;  // Mirror image (used for SpoutCam)
 	bool m_bSwapRB;  // RGB <> BGR (used for SpoutCam)
+	bool m_bGLDXdone; // Compatibility test done
 
 	// Sharing modes
 	bool m_bAuto;         // Auto share mode - user set

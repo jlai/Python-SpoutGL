@@ -117,6 +117,12 @@ PYBIND11_MODULE(_spoutgl, m) {
         .def("waitFrameSync", &SpoutSender::WaitFrameSync, py::call_guard<py::gil_scoped_release>())
         .def("getCPU", &SpoutSender::GetCPU)
         .def("getGLDX", &SpoutSender::GetGLDX)
+
+        // data sharing
+        .def("createMemoryBuffer", &SpoutSender::CreateMemoryBuffer)
+        .def("writeMemoryBuffer", &SpoutSender::WriteMemoryBuffer)
+        .def("deleteMemoryBuffer", &SpoutSender::DeleteMemoryBuffer)
+        .def("getMemoryBufferSize", &SpoutSender::GetMemoryBufferSize)
    );
 
     addCommonDefs(py::class_<SpoutReceiver>(m, "SpoutReceiver")
@@ -169,6 +175,27 @@ PYBIND11_MODULE(_spoutgl, m) {
         .def("getSenderFrame", &SpoutReceiver::GetSenderFrame)
         .def("setFrameSync", &SpoutReceiver::SetFrameSync)
         .def("waitFrameSync", &SpoutReceiver::WaitFrameSync, py::arg("senderName"), py::arg("timeout") = 0, py::call_guard<py::gil_scoped_release>())
+
+        // data-sharing
+        .def("readMemoryBuffer", [](SpoutReceiver& receiver, const char *name, std::optional<py::buffer> buffer, int length) {
+            if (!buffer.has_value()) {
+                // Buffer cannot be None
+                throw pybind11::type_error("Must provide a buffer");
+            }
+
+            py::buffer_info bufferInfo(buffer->request());
+
+            if (bufferInfo.size * bufferInfo.itemsize < length) {
+                throw pybind11::buffer_error("Buffer not large enough");
+            }
+
+            if (!PyBuffer_IsContiguous(bufferInfo.view(), 'C')) {
+                throw pybind11::buffer_error("Buffer must be contiguous");
+            }
+
+            return receiver.ReadMemoryBuffer(name, static_cast<char*>(bufferInfo.ptr), length);
+        })
+        .def("getMemoryBufferSize", &SpoutReceiver::GetMemoryBufferSize)
     );
 
     auto enums = m.def_submodule("enums", "Re-export of supported OpenGL format enums as integers");
