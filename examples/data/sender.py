@@ -21,9 +21,9 @@ with SpoutGL.SpoutSender() as sender:
     while True:
         # Generating bytes in Python is very slow; ideally you should pass in a buffer obtained elsewhere
         # or re-use an already allocated array instead of allocating one on the fly
-        pixels = bytes(islice(cycle([randcolor(), randcolor(), randcolor(), 255]), SEND_WIDTH * SEND_HEIGHT * 3))
+        pixels = bytes(islice(cycle([randcolor(), randcolor(), randcolor(), 255]), SEND_WIDTH * SEND_HEIGHT * 4))
 
-        result = sender.sendImage(pixels, SEND_WIDTH, SEND_HEIGHT, GL.GL_RGB, False, 0)
+        result = sender.sendImage(pixels, SEND_WIDTH, SEND_HEIGHT, GL.GL_RGBA, False, 0)
         print("Send result", result)
 
         # add data to buffer

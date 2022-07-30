@@ -108,6 +108,10 @@ PYBIND11_MODULE(_spoutgl, m) {
                 throw pybind11::buffer_error("Buffer must be contiguous");
             }
 
+            if (!sender.IsInitialized()) {
+                 sender.spout.OpenSpout();
+            }
+
             py::gil_scoped_release release; // Safe? https://mail.python.org/pipermail/python-dev/2018-July/154652.html
             return sender.SendImage((unsigned char*)bufferInfo.ptr, height, width, glFormat, invert, hostFbo);
             })
