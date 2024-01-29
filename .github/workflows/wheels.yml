@@ -43,7 +43,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: pypa/cibuildwheel@v2.16.2
+    - uses: pypa/cibuildwheel@v2.16.4
       env:
         CIBW_SKIP: cp27-*
         CIBW_ARCHS_WINDOWS: "AMD64 x86"
