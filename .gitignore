@@ -6,10 +6,16 @@
 build.bat
 vendor/SpoutGL/VS2017/x64
 vendor/SpoutGL/VS2017/Win32
+vendor/SpoutGL/VS2022/x64
+vendor/SpoutGL/VS2022/Win32
 VS2019/Debug
 VS2019/Release
 VS2019/x64
 VS2019/Win32
+VS2022/Debug
+VS2022/Release
+VS2022/x64
+VS2022/Win32
 src/SpoutGL/*.dll
 .idea
 
