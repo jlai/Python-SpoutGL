@@ -66,6 +66,16 @@ int getBytesPerPixel(GLenum format) {
     }
 }
 
+struct SenderInfo {
+    SenderInfo(std::string name, unsigned int w, unsigned int h): width(w), height(h), dxShareHandle(NULL), dwFormat(0) {}
+
+    std::string name;
+    unsigned int width;
+    unsigned int height;
+    HANDLE dxShareHandle;
+    DWORD dwFormat;
+};
+
 template<typename T>
 py::class_<T> &addCommonDefs(py::class_<T> &clazz) {
     return clazz
@@ -75,7 +85,28 @@ py::class_<T> &addCommonDefs(py::class_<T> &clazz) {
         .def("getCPUshare", &T::GetCPUshare)
         .def("setCPUshare", &T::SetCPUshare)
         .def("createOpenGL", &T::CreateOpenGL)
-        .def("closeOpenGL", &T::CloseOpenGL);
+        .def("closeOpenGL", &T::CloseOpenGL)
+        .def("setActiveSender", &T::SetActiveSender)
+        .def("getActiveSender", [](T& spoutWrapper) -> py::object {
+            std::vector<char> senderNameBuf(256);
+            if (spoutWrapper.GetActiveSender(senderNameBuf.data())) {
+                return py::str(senderNameBuf.data());
+            } else {
+                return py::none();
+            }
+        })
+        .def("getSenderInfo", [](T& spoutWrapper, std::string senderName) -> py::object {
+            unsigned int width;
+            unsigned int height;
+            HANDLE dxShareHandle;
+            DWORD dwFormat;
+
+            if (spoutWrapper.GetSenderInfo(senderName.c_str(), width, height, dxShareHandle, dwFormat)) {
+                return py::cast(new SenderInfo(senderName, width, height));
+            } else {
+                return py::none();
+            }
+        });
 }
 
 PYBIND11_MODULE(_spoutgl, m) {
@@ -85,6 +116,11 @@ PYBIND11_MODULE(_spoutgl, m) {
 
         .. currentmodule:: SpoutGL
     )pbdoc";
+
+    py::class_<SenderInfo>(m, "SenderInfo")
+        .def_readonly("name", &SenderInfo::name)
+        .def_readonly("width", &SenderInfo::width)
+        .def_readonly("height", &SenderInfo::height);
     
     addCommonDefs(py::class_<SpoutSender>(m, "SpoutSender")
         .def(py::init<>())
@@ -168,6 +204,7 @@ PYBIND11_MODULE(_spoutgl, m) {
             py::gil_scoped_release release; // Safe? https://mail.python.org/pipermail/python-dev/2018-July/154652.html
             return receiver.ReceiveImage(static_cast<unsigned char*>(bufferInfo.ptr), glFormat, invert, hostFbo);
         })
+        .def("getSenderList", &SpoutReceiver::GetSenderList)
         .def("getSenderName", &SpoutReceiver::GetSenderWidth)
         .def("getSenderWidth", &SpoutReceiver::GetSenderWidth)
         .def("getSenderHeight", &SpoutReceiver::GetSenderHeight)

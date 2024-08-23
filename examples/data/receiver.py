@@ -1,5 +1,3 @@
-import numpy as np
-
 import SpoutGL
 from OpenGL import GL
 from itertools import repeat
