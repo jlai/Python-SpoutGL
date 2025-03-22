@@ -10,7 +10,7 @@ import os.path
 
 import sys
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 is_64bits = sys.maxsize > 2**32
 
@@ -75,7 +75,7 @@ setup(
         "build": CopyDllsAndBuildCommand
     },
     zip_safe=False,
-    python_requires=">3.7",
+    python_requires=">=3.8",
 
     packages=["SpoutGL"],
     package_dir={"": "src"},

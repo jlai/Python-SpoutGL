@@ -6,7 +6,7 @@ An unofficial Python wrapper for [Spout](https://leadedge.github.io/) using [pyb
 Key features compared to some previous wrappers:
 - Covers more of the SpoutGL API, including sendImage/receiveImage, setFrameSync/waitFrameSync and data sharing
 - pybind11 instead of Boost Python which should make it easier to build for multiple Python versions
-- pip/wheel support for Python 3.7+ on both 64-bit and 32-bit Windows
+- pip/wheel support for Python 3.8+ on both 64-bit and 32-bit Windows
 - No external dependencies
 
 # Installation
