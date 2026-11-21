@@ -10,7 +10,7 @@ import os.path
 
 import sys
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 is_64bits = sys.maxsize > 2**32
 
