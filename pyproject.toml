@@ -9,3 +9,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
 test-extras = ["test"]
+
+[tool.cibuildwheel.windows]
+repair-wheel-command = "delvewheel repair --add-path \"{project}/vendor/SpoutGL/Binaries/x64;{project}/vendor/SpoutGL/Binaries/Win32\" -w {dest_dir} {wheel}"

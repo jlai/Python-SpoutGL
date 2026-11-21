@@ -1,5 +1,5 @@
 from setuptools import setup
-from distutils.command.build import build as BuildCommand
+from setuptools.command.build_py import build_py as BuildPyCommand
 
 # Available at setup time due to pyproject.toml
 from pybind11.setup_helpers import Pybind11Extension, build_ext
@@ -42,13 +42,17 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 
-class CopyDllsAndBuildCommand(BuildCommand):
-    """Copies arch-specific DLLs to the SpoutGL package directory"""
+class CopyDllsBuildPyCommand(BuildPyCommand):
+    """Copies the matching Spout DLL into the staged package directory."""
 
     def run(self):
-        shutil.copyfile(os.path.join(spout_lib_dir, "Spout.dll"),
-                        "src/SpoutGL/Spout.dll")
         super().run()
+        package_dir = os.path.join(self.build_lib, "SpoutGL")
+        os.makedirs(package_dir, exist_ok=True)
+        shutil.copyfile(
+            os.path.join(spout_lib_dir, "Spout.dll"),
+            os.path.join(package_dir, "Spout.dll"),
+        )
 
 
 setup(
@@ -71,16 +75,16 @@ setup(
 
     ext_modules=ext_modules,
     extras_require={"test": []},
-    cmdclass={
-        "build": CopyDllsAndBuildCommand
-    },
+    cmdclass={"build_py": CopyDllsBuildPyCommand},
     zip_safe=False,
     python_requires=">=3.11",
 
     packages=["SpoutGL"],
     package_dir={"": "src"},
     package_data={
-        "": ["*.dll"]
+        # The extension links against Spout.dll. Include it in the package so
+        # delvewheel can resolve the dependency while repairing the wheel.
+        "SpoutGL": ["Spout.dll"]
     },
     include_package_data=True
 )
